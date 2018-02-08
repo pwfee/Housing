@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Beijing Housing Predict System</title>
+</head>
+<body>
+<script src="http://unpkg.com/vue/dist/vue.js"></script>
+<script src="http://unpkg.com/iview/dist/iview.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+<style type="text/css">
+	@import url("http://unpkg.com/iview/dist/styles/iview.css");
+	#app{padding: 32px;}
+</style>
+<dir id="app">
+    <center><h1>Beijing Housing Predict System</h1></center></br></br>
+
+    <row>
+        <i-col span="5"><br></i-col>
+        <i-col span="14">
+        	<slider id="area" v-model="area" :step="1" :max="500" show-input show-tip="always" :tip-format="areaFormat"></slider>
+			</br>
+			<slider v-model="room" :step="1" :max="6" show-stops show-input show-tip="always" :tip-format="roomFormat"></slider>
+			</br>
+			<slider v-model="living" :step="1" :max="6" show-stops show-input show-tip="always" :tip-format="livingFormat"></slider>
+			</br>
+			<slider v-model="year" :step="1" :min="1960" :max="2018" show-input show-tip="always" :tip-format="yearFormat"></slider>
+			</br>
+			<slider v-model="floor" :step="1" :min="1" :max="35" show-input show-tip="always" :tip-format="floorFormat"></slider>
+			</br>
+        <row type="flex" justify="start" class="code-row-bg">
+            <h1>
+                Is that school district housing?
+                <i-switch v-model="school" size="large">
+                    <span slot="open">YES</span>
+                    <span slot="close">NO</span>
+                </i-switch>
+            </h1>
+        </row>
+
+        <row type="flex" justify="end" class="code-row-bg">
+            <i-col span="10">
+                <h1>Price: {% verbatim %}{{ total }}{% endverbatim %}</h1>
+            </i-col>
+            <i-col span="10"></i-col>
+            <i-col span="4">
+                <i-button type="success" v-on:click="update()" shape="circle" long>Predict</i-button>
+            </i-col>
+        </row>
+        </i-col>
+
+        <i-col span="5"><br></i-col>
+    </row>
+
+</div>
+
+<script type="text/javascript">
+
+    var Main = {
+      data () {
+            return {
+                area: 100,
+                room: 3,
+                living: 1,
+                year: 2008,
+                floor: 10,
+                school: false,
+                total: 0,
+                apiUrl: 'http://127.0.0.1:8000/predict',
+            }
+        },
+      methods: {
+            areaFormat (val) {
+                return 'Area Size: ' + val + '㎡';
+            },
+            roomFormat (val) {
+                return 'Room Num: ' + val;
+            },
+            livingFormat(val) {
+                return 'LivingRoom Num: ' + val;
+            },
+            yearFormat(val) {
+                return 'Year: ' + val;
+            },
+            floorFormat(val) {
+                return 'Floor: ' + val;
+            },
+            update: function () {
+                this.$http.get(this.apiUrl + '?area=' + this.area
+                    + '&room=' + this.room + '&living=' + this.living
+                    + '&year=' + this.year + '&floor=' + this.floor
+                    + '&school=' + this.school)
+                    .then((response) => {
+                        this.total = response.data;
+                    })
+
+                    .catch(function(response){
+                        console.log(response);
+                    })
+            }
+
+		}
+    }
+
+
+    var Component = Vue.extend(Main)
+    new Component().$mount('#app')
+</script>
+
+</body>
+</html>
+
+
