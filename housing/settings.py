@@ -25,7 +25,7 @@ SECRET_KEY = 'vdn1l1k@wfh5l-*dnusu=f+=zdbd#+cd&dd=0+%91@%5=1z=g='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['house.wenfeng.me']
+ALLOWED_HOSTS = ['house.wenfeng.me', '127.0.0.1']
 
 
 # Application definition
