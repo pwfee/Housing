@@ -14,7 +14,7 @@ def index(request):
 
 
 def predict(request):
-    model = joblib.load(BASE_DIR + '/static/model.pkl')
+    model = joblib.load(BASE_DIR + '/static/bj_housing.pkl')
     client_data = []  # Client 3
 
     client_data.append(request.GET.get('area', '1'))
@@ -34,7 +34,6 @@ def predict(request):
 
     client_data.append(request.GET.get('floor', '1'))
 
+    ans = format(int(model.predict(client_data) * 10000), ',')
 
-    str = model.predict(client_data)
-
-    return HttpResponse(str)
+    return HttpResponse(ans)

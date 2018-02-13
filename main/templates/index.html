@@ -10,47 +10,121 @@
 <style type="text/css">
 	@import url("http://unpkg.com/iview/dist/styles/iview.css");
 	#app{padding: 32px;}
+    body {
+        border-top: 10px solid #585d6a;
+    }
+    .rcorners {
+        border-radius: 25px;
+        border: 2px dashed #585d6a;
+        padding: 20px;
+    }
+    .intro {
+        font-size: 18px;
+    }
+    #rcorners2 {
+        border-radius: 25px;
+        border: 2px dashed #585d6a;
+        padding: 20px;
+        height: auto;
+        
+    }
+
+    #footer {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+    }
+    #version {
+        margin-bottom: 10px;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 45px;
+    }
+
+    .footer {
+        font-size: 18px;
+    }
 </style>
-<dir id="app">
-    <center><h1>Beijing Housing Predict System</h1></center></br></br>
 
-    <row>
-        <i-col span="5"><br></i-col>
-        <i-col span="14">
-        	<slider id="area" v-model="area" :step="1" :max="500" show-input show-tip="always" :tip-format="areaFormat"></slider>
-			</br>
-			<slider v-model="room" :step="1" :max="6" show-stops show-input show-tip="always" :tip-format="roomFormat"></slider>
-			</br>
-			<slider v-model="living" :step="1" :max="6" show-stops show-input show-tip="always" :tip-format="livingFormat"></slider>
-			</br>
-			<slider v-model="year" :step="1" :min="1960" :max="2018" show-input show-tip="always" :tip-format="yearFormat"></slider>
-			</br>
-			<slider v-model="floor" :step="1" :min="1" :max="35" show-input show-tip="always" :tip-format="floorFormat"></slider>
-			</br>
-        <row type="flex" justify="start" class="code-row-bg">
-            <h1>
-                Is that school district housing?
-                <i-switch v-model="school" size="large">
-                    <span slot="open">YES</span>
-                    <span slot="close">NO</span>
-                </i-switch>
-            </h1>
-        </row>
+<div id="app">
+    <content>
+        <p class="title">Beijing Housing Predict System</p></br></br>
 
-        <row type="flex" justify="end" class="code-row-bg">
-            <i-col span="10">
-                <h1>Price: {% verbatim %}{{ total }}{% endverbatim %}</h1>
+        <row>
+            <i-col span="1"><br></i-col>
+            <i-col span="12">
+                <div id="predictor" class="rcorners">
+                    <br>
+                    <slider id="area" v-model="area" :step="1" :max="500" show-input show-tip="always" :tip-format="areaFormat"></slider>
+                    </br>
+                    <slider v-model="room" :step="1" :max="6" show-stops show-input show-tip="always" :tip-format="roomFormat"></slider>
+                    </br>
+                    <slider v-model="living" :step="1" :max="6" show-stops show-input show-tip="always" :tip-format="livingFormat"></slider>
+                    </br>
+                    <slider v-model="year" :step="1" :min="1960" :max="2018" show-input show-tip="always" :tip-format="yearFormat"></slider>
+                    </br>
+                    <slider v-model="floor" :step="1" :min="1" :max="35" show-input show-tip="always" :tip-format="floorFormat"></slider>
+                    </br>
+                    <row type="flex" justify="start" class="code-row-bg">
+                        <h1>
+                            Is that school district housing?
+                            <i-switch v-model="school" size="large">
+                                <span slot="open">YES</span>
+                                <span slot="close">NO</span>
+                            </i-switch>
+                        </h1>
+                    </row>
+
+                    <row type="flex" justify="end" class="code-row-bg">
+                        <i-col span="10">
+                            <h1>Price: &yen; {% verbatim %}{{ total }}{% endverbatim %}</h1>
+                        </i-col>
+                        <i-col span="10"></i-col>
+                        <i-col span="4">
+                            <i-button type="success" v-on:click="predict()" shape="circle" long>Predict</i-button>
+                        </i-col>
+                    </row>
+                </div>
+
+                <br>
+                <div id="download" class="rcorners">
+                        <h2>Data Download</h2>
+                        <p class="intro">The housing price data fetched from <a href="https://www.lianjia.com/">Lianjia.com</a> and the web crawler based on
+                        <a href="https://github.com/lanbing510/LianJiaSpider">LianJiaSpider</a>.</p>
+                    <p class="intro">You can download the <a href="static/bj_housing.csv">original data (CSV)</a> or <a href="static/bj_housing.pkl">scikit-learn Model</a>.</p>
+                </div>
+
             </i-col>
-            <i-col span="10"></i-col>
-            <i-col span="4">
-                <i-button type="success" v-on:click="update()" shape="circle" long>Predict</i-button>
+
+            <i-col span="1"><br></i-col>
+            <i-col span="9" id="rcorners2">
+                <h2>1.Why does the project exists?</h2>
+                <p class="intro">I want to know about the price tendency and simplely predict
+                    the housing price in Beijing after reading the article <i><a href="https://economix.blogs.nytimes.com/2013/01/25/a-place-that-makes-new-york-real-estate-look-cheap/">
+                        A Place That Makes New York Real Estate Look Cheap</a></i> from New York Times.
+                </p><br>
+
+                <h2>2.How it works?</h2>
+                <p class="intro">The predict model is based on <a href="https://en.wikipedia.org/wiki/Decision_tree">Decision trees</a> of Machine Learning Framework <a href="http://scikit-learn.org">scikit-learn</a> and the system backend is powered by
+                    <a href="https://www.djangoproject.com">Django</a>. It adopts <a href="https://en.wikipedia.org/wiki/Hyperparameter_optimization#Grid_search">grid search algorithm</a> to optimization learning model and uses <a href="http://stattrek.com/statistics/dictionary.aspx?definition=coefficient_of_determination">
+                        coefficient of determination</a> as training metrics.</p><br>
+
+                <h2>3.Who can use it?</h2>
+                <p class="intro">The people who want to buy real estate in Beijing can check the history pricing tendency and predict Today's prices with the specs you need. Or, the people are interested in data mining and analysis.</p><br>
+
+                <h2>4.Can I help to improve the accuracy?</h2>
+                <p class="intro">Yes! The system need to collect more housing data to train model, and use a more accurate algorithm instead to improve the result. If you are interested in this project, feel free to contact me! </p><br>
+
             </i-col>
+            <i-col span="1"><br></i-col>
         </row>
-        </i-col>
-
-        <i-col span="5"><br></i-col>
-    </row>
-
+    </content>
+</div>
+<div id="footer">
+    <p class="footer">Powered by <a href="https://wenfeng.me/">Wenfeng Pan</a> &nbsp; Version: 20180113-fb440a</p>
 </div>
 
 <script type="text/javascript">
@@ -68,6 +142,9 @@
                 apiUrl: 'http://127.0.0.1:8000/predict',
             }
         },
+      mounted: function () {
+          this.predict();
+       },
       methods: {
             areaFormat (val) {
                 return 'Area Size: ' + val + '㎡';
@@ -84,7 +161,7 @@
             floorFormat(val) {
                 return 'Floor: ' + val;
             },
-            update: function () {
+            predict: function () {
                 this.$http.get(this.apiUrl + '?area=' + this.area
                     + '&room=' + this.room + '&living=' + this.living
                     + '&year=' + this.year + '&floor=' + this.floor
