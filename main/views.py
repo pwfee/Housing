@@ -34,6 +34,6 @@ def predict(request):
 
     client_data.append(request.GET.get('floor', '1'))
 
-    ans = format(int(model.predict(client_data) * 10000), ',')
+    ans = format(int(model.predict([client_data]) * 10000), ',')
 
     return HttpResponse(ans)
